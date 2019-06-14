@@ -20,11 +20,15 @@ public class TcpClass implements MessageReceivedListener, ConnectionAcceptedList
 
     TcpConnection c;
     TcpServer s;
-    int port = 1234;
+    int port;
+    Server server;
+    int players = 0;
 
-    public void TcpClass()
+    public TcpClass(Server server, int port)
     {
-        s = new TcpServer();
+        this.s = new TcpServer();
+        this.server = server;
+        this.port = port;
 
         if (s.start(port))
         {
@@ -36,29 +40,45 @@ public class TcpClass implements MessageReceivedListener, ConnectionAcceptedList
             }
             catch (Exception e)
             {
-                //error
+                System.err.print("Error: cannot get server ip");
                 myIp = "error";
             }
+            System.out.println("Server IP: " + myIp + ", Port: " + String.valueOf(port));
 
         }
         else
         {
-            // error
+            System.err.print("Error: cannot start server");
         }
 
     }
 
     @Override
     public void onMessageReceived(MessageEvent me)
-    {
-        String line = me.getLine();
+    {        
+        Data d = me.getData();
+        System.out.println("ch.blobber.tictacboom.TcpClass.onMessageReceived()");
+        String from = d.readString("From");
+
+        Data returnData = new Data();
+        if ("canPlay".equals(from))
+            returnData = server.canPlayReturn(d);
+        if ("doMove".equals(from))
+            returnData = server.doMoveReturn(d);
+        
+        Connection connection = me.getConnection();
+        connection.sendData(returnData);
     }
 
     @Override
     public void onConnectionAccepted(ConnectionEvent ce)
     {
         Data data = new Data();
-        data.writeString("connectionAcepptet", "true");
+        System.out.println("ch.blobber.tictacboom.TcpClass.onConnectionAccepted()");
+        data.writeString("isConnected", "true");
+        data.writeString("From", "isHere");
+        data.writeInt("myself", players);
+        players++;
         
         Connection connection = ce.getConnection();
         connection.sendData(data);
