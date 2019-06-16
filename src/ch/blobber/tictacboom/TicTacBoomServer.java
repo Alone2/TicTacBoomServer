@@ -3,6 +3,7 @@ package ch.blobber.tictacboom;
 
 import ch.jeda.Program;
 import ch.jeda.ui.Canvas;
+import ch.jeda.ui.Text;
 import ch.jeda.ui.View;
 import ch.jeda.ui.ViewFeature;
 
@@ -21,10 +22,11 @@ public class TicTacBoomServer extends Program
     @Override
     public void run()
     {
-        view = new View(500, 500, ViewFeature.ORIENTATION_LANDSCAPE);
+        view = new View(200, 200, ViewFeature.ORIENTATION_LANDSCAPE);
+        Text t = new Text(20, view.getWidthDp() / 2, "I'm just a Server \nI display nothing...");
+        view.add(t);
+        server = new Server(playersize, this);
         
-        server = new Server(playersize);
-  
     }
     
     public void reset() {

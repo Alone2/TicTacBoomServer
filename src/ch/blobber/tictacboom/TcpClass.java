@@ -2,6 +2,7 @@ package ch.blobber.tictacboom;
 
 import ch.jeda.Connection;
 import ch.jeda.Data;
+import ch.jeda.Jeda;
 import ch.jeda.TcpConnection;
 import ch.jeda.TcpServer;
 import ch.jeda.event.ConnectionAcceptedListener;
@@ -18,7 +19,6 @@ import java.net.InetAddress;
 public class TcpClass implements MessageReceivedListener, ConnectionAcceptedListener
 {
 
-    TcpConnection c;
     TcpServer s;
     int port;
     Server server;
@@ -43,6 +43,7 @@ public class TcpClass implements MessageReceivedListener, ConnectionAcceptedList
                 System.err.print("Error: cannot get server ip");
                 myIp = "error";
             }
+            Jeda.addEventListener(this);
             System.out.println("Server IP: " + myIp + ", Port: " + String.valueOf(port));
 
         }
@@ -52,12 +53,16 @@ public class TcpClass implements MessageReceivedListener, ConnectionAcceptedList
         }
 
     }
+    
+    public void close() {
+        s.stop();
+    }
 
     @Override
     public void onMessageReceived(MessageEvent me)
     {        
         Data d = me.getData();
-        System.out.println("ch.blobber.tictacboom.TcpClass.onMessageReceived()");
+        System.out.println("Question: " + me.getLine());
         String from = d.readString("From");
 
         Data returnData = new Data();
@@ -65,6 +70,8 @@ public class TcpClass implements MessageReceivedListener, ConnectionAcceptedList
             returnData = server.canPlayReturn(d);
         if ("doMove".equals(from))
             returnData = server.doMoveReturn(d);
+        
+        System.out.println("Respone: " + returnData.toString());
         
         Connection connection = me.getConnection();
         connection.sendData(returnData);
@@ -78,6 +85,7 @@ public class TcpClass implements MessageReceivedListener, ConnectionAcceptedList
         data.writeString("isConnected", "true");
         data.writeString("From", "isHere");
         data.writeInt("myself", players);
+        data.writeInt("playerSize", server.playerSize);
         players++;
         
         Connection connection = ce.getConnection();
