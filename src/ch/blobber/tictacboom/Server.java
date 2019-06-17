@@ -121,12 +121,12 @@ public class Server
         }
         
         //Schrägen
-        for (int i = 0; i < playerSize+1; i++) {
+        for (int i = (-1)*playerSize; i < playerSize*2+1; i++) {
             ArrayList<Integer> inLineXX = new ArrayList<Integer>();
             ArrayList<Integer> inLineXY = new ArrayList<Integer>();
             ArrayList<Integer> inLineYX = new ArrayList<Integer>();
             ArrayList<Integer> inLineYY = new ArrayList<Integer>();
-            for (int j = 0; j < playerSize+1; j++) {
+            for (int j = (-1)*playerSize; j < playerSize*2+1; j++) {
                 //if (!(i + j > playerSize +1)) {
                     inLineXX.add(i + j);
                     inLineXY.add(j);
@@ -160,9 +160,9 @@ public class Server
             } else {
                 streak = 0;
             }
+            if (streak >= 3) 
+                return true;
         }
-        if (streak >= 3) 
-            return true;
         return false;
         
     }
@@ -182,9 +182,9 @@ public class Server
             } else {
                 streak = 0;
             }
+            if (streak >= 3) 
+                return true;
         }
-        if (streak >= 3) 
-            return true;
         return false;
     }
 
