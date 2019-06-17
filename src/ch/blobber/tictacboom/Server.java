@@ -10,15 +10,18 @@ import java.util.ArrayList;
  */
 public class Server
 {
-    TcpClass tcp;
+    
     final int port = 6465;
+    
+    TcpClass tcp;
+    String[] spielfeld;
+    TicTacBoomServer tac;
+    int playerTurnFirst;
     int playerSize;
     int playerTurn;
-    String[] spielfeld;
     boolean[] spaceTaken;
-    TicTacBoomServer tac;
     
-    private int saidByeToPlayer = 0;
+    private int saidByeToPlayer;
     
     public Server(int playerSize, TicTacBoomServer tac) {
         this.playerSize = playerSize;
@@ -26,6 +29,8 @@ public class Server
         this.spielfeld = new String[playerSize];
         this.spaceTaken = new boolean[(int) Math.pow(playerSize + 1, 2)];
         this.playerTurn = 0;
+        this.playerTurnFirst = 0;
+        this.saidByeToPlayer = 0;
         this.tac = tac;
         //this.start();
     }
@@ -190,11 +195,10 @@ public class Server
             return;
         this.spielfeld = new String[playerSize];
         this.spaceTaken = new boolean[(int) Math.pow(playerSize + 1, 2)];
-        this.playerTurn = 0;
+        playerTurnFirst = (playerTurnFirst + 1) % playerSize;
+        this.playerTurn = playerTurnFirst;
         this.saidByeToPlayer = 0;
         
         System.out.println("resetting Server");
-        //tcp.close();
-        //tac.reset();
     }
 }
